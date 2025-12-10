@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* hide number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* Fondo global de la app */
+body {
+  background: linear-gradient(to bottom right, #1E3A8A, #0E9F6E);
+}

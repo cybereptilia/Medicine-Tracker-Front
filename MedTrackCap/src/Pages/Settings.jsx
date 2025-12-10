@@ -1,33 +1,25 @@
-// Settings: configuración de zona horaria, alertas por email, etc.
-// Esto terminará sincronizándose con el backend (perfil del usuario).
-
+// Settings.jsx
 import Page from "./_Page";
+import SidebarNav from "../Components/SidebarNav";
+import Card from "../Components/Card.jsx";
 
 export default function Settings() {
   return (
-    <Page title="Settings">
-      <div
-        style={{
-          display: "grid",
-          gap: 12,
-          gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
-        }}
-      >
-        <div style={{ border: "1px solid #eee", borderRadius: 12, padding: 12 }}>
-          <h3>Timezone</h3>
-          <select style={{ padding: 8, borderRadius: 8, border: "1px solid #ccc", width: "100%" }}>
+    <Page title="Settings" sidebar={<SidebarNav />}>
+       <div className="max-w-xl lg:max-w-2xl mx-auto space-y-6">
+        <Card title="Timezone">
+          <select className="w-full rounded-xl border border-slate-300 px-3 py-2">
             <option>America/New_York</option>
             <option>America/Chicago</option>
             <option>America/Los_Angeles</option>
           </select>
-        </div>
+        </Card>
 
-        <div style={{ border: "1px solid #eee", borderRadius: 12, padding: 12 }}>
-          <h3>Email Alerts</h3>
-          <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input type="checkbox" /> Enable
+        <Card title="Email Alerts">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="h-4 w-4 text-teal-600" /> Enable
           </label>
-        </div>
+        </Card>
       </div>
     </Page>
   );

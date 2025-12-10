@@ -1,7 +1,8 @@
+// src/Pages/Register.jsx
+
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputField from "../Components/InputField";
-import { useNavigate } from 'react-router-dom';
 import API_URL from '../config';
 
 
@@ -92,26 +93,63 @@ const Register = () => {
     
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-800 to-green-700 text-white p-6">
-      <div className="bg-white bg-opacity-10 p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4 text-center text-black">Register</h2>
-        <form onSubmit={handleSubmit}>
-          <InputField label="First Name" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" />
-          <InputField label="LastName" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" />
-          <InputField label="Username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-          <InputField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-          <InputField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="******" />
-          <p className="text-black">{message}</p>
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-all mt-4">
+ return (
+    <main className="page register-page">
+      <section className="register-card">
+        <h2 className="register-title">Register</h2>
+
+        <form onSubmit={handleSubmit} className="register-form">
+          <InputField
+            label="First Name"
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="First Name"
+          />
+          <InputField
+            label="Last Name"
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Last Name"
+          />
+          <InputField
+            label="Username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Username"
+          />
+          <InputField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+          />
+          <InputField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="******"
+          />
+
+          {message && <p className="register-message">{message}</p>}
+
+          <button type="submit" className="register-button">
             Register
           </button>
         </form>
-        <p className="mt-4 text-center text-sm text-black">
-        Already have an account? <Link to="/login" className="text-blue-300 hover:underline">Login here</Link>
+
+        <p className="register-footer">
+          Already have an account?{" "}
+          <Link to="/login" className="register-link">
+            Login here
+          </Link>
         </p>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

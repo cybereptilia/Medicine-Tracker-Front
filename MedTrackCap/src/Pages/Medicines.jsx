@@ -1,21 +1,12 @@
-// Medicines.jsx
+// src/Pages/Medicines.jsx
 import React from "react";
+import { Link } from "react-router-dom";
 import Page from "./_Page";
-import FieldHelp from "../Components/FieldHelp";
+
 const LS_KEY = "medtracker.medicines";
 
-//  Map your form field names ➜ the keys used in staticTips
-// (so we don’t have to rename your state or change staticTips file)
-const fieldKeyMap = {
-  name: "medicationName",
-  dose: "dosage",
-  unit: "unit",          // optional tip — add to staticTips if you want
-  prescriber: "prescriber", // optional tip — add to staticTips if you want
-  notes: "notes"         // optional tip — add to staticTips if you want
-};
-
 export default function Medicines() {
-  // 1) Local state hydrated from localStorage (with guards)
+  // 1) Estado desde localStorage
   const [items, setItems] = React.useState(() => {
     try {
       const raw = localStorage.getItem(LS_KEY);
@@ -26,57 +17,13 @@ export default function Medicines() {
     }
   });
 
-  // 2) "Add" form state
-  const [form, setForm] = React.useState({
-    name: "",
-    dose: "",
-    unit: "pill",
-    prescriber: "",
-    notes: "",
-  });
-
-  // 2b) Visual search/filter state
+  // 2) Estado de búsqueda
   const [q, setQ] = React.useState("");
 
-  // 3) Persistence: save on every items change
+  // 3) Persistencia
   React.useEffect(() => {
     localStorage.setItem(LS_KEY, JSON.stringify(items));
   }, [items]);
-
-  // 4) Generic change handler
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-  };
-
-  const addMedicine = (e) => {
-    e.preventDefault();
-
-    // minimal validations
-    const name = form.name.trim();
-    if (!name) return alert("El nombre es obligatorio.");
-    if (!form.dose.trim() || Number.isNaN(Number(form.dose))) {
-      return alert("La dosis debe ser un número.");
-    }
-
-    // avoid duplicates (case/trim-insensitive)
-    const key = name.toLocaleLowerCase();
-    const exists = items.some((m) => m.name.trim().toLocaleLowerCase() === key);
-    if (exists) return alert("Ya existe una medicina con ese nombre.");
-
-    const newItem = {
-      id: (crypto?.randomUUID && crypto.randomUUID()) || String(Date.now()),
-      name,
-      dose: form.dose.trim(),
-      unit: form.unit,
-      prescriber: form.prescriber.trim(),
-      notes: form.notes.trim(),
-      createdAt: Date.now(),
-    };
-
-    setItems((prev) => [newItem, ...prev]);
-    setForm({ name: "", dose: "", unit: "pill", prescriber: "", notes: "" });
-  };
 
   const removeMedicine = (id) => {
     if (!window.confirm("¿Eliminar esta medicina?")) return;
@@ -84,7 +31,6 @@ export default function Medicines() {
   };
 
   const quickEdit = (m) => {
-    // simple placeholder edit (until you add a modal/page)
     const nextName = prompt("Editar nombre de la medicina:", m.name)?.trim();
     if (!nextName) return;
     setItems((prev) =>
@@ -101,53 +47,62 @@ export default function Medicines() {
     : items;
 
   return (
-    <Page title="Medicines">
-      {/* Search + jump-to-form button */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
+    <Page title="My Meds">
+      {/* Buscador + botón "Add Meds" solo en desktop */}
+      <div className="flex flex-col md:flex-row gap-3 mb-4 md:items-center">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Buscar por nombre o prescriptor"
-          style={{ padding: 8, borderRadius: 8, border: "1px solid #ccc", flex: 1, minWidth: 220 }}
+          className="w-full md:flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm md:text-base"
         />
-        <button
-          onClick={() => document.getElementById("add-form")?.scrollIntoView({ behavior: "smooth" })}
-          style={{ padding: "8px 12px", borderRadius: 8, background: "black", color: "white", border: 0 }}
+
+        <Link
+          to="/medications/new"
+          className="hidden md:inline-flex items-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-2 text-sm font-semibold shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400"
         >
-          + Add Medicine
-        </button>
+          <span className="text-lg">＋</span>
+          Add meds
+        </Link>
       </div>
 
-      {/* Card list */}
-      <div style={{ display: "grid", gap: 12, marginBottom: 16 }}>
+      {/* Lista de tarjetas */}
+      <div className="grid gap-3 mb-4">
         {filtered.length === 0 && (
-          <div className="card">No hay resultados. Agrega medicinas o ajusta tu búsqueda.</div>
+          <div className="card text-slate-700">
+            No hay resultados. Agrega medicinas desde "Add Meds" o ajusta tu búsqueda.
+          </div>
         )}
+
         {filtered.map((m) => (
           <article key={m.id} className="card">
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }}>
-              <h3 style={{ margin: 0 }}>{m.name}</h3>
-              <small style={{ color: "#64748b" }}>
+            <div className="flex justify-between gap-2 items-baseline">
+              <h3 className="m-0 font-semibold text-slate-900">{m.name}</h3>
+              <small className="text-slate-500">
                 {m.dose} {m.unit}
               </small>
             </div>
 
             {m.prescriber && (
-              <div style={{ color: "#64748b", fontSize: 14, marginTop: 4 }}>Prescriber: {m.prescriber}</div>
+              <div className="text-slate-500 text-sm mt-1">
+                Prescriber: {m.prescriber}
+              </div>
             )}
 
-            {m.notes && <p style={{ color: "#334155", fontSize: 14, marginTop: 8 }}>{m.notes}</p>}
+            {m.notes && (
+              <p className="text-slate-700 text-sm mt-2">{m.notes}</p>
+            )}
 
-            <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+            <div className="mt-3 flex gap-2">
               <button
                 onClick={() => quickEdit(m)}
-                style={{ padding: "6px 10px", borderRadius: 8, background: "black", color: "white", border: 0 }}
+                className="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800"
               >
                 Edit
               </button>
               <button
                 onClick={() => removeMedicine(m.id)}
-                style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid #ccc", background: "white" }}
+                className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-sm hover:bg-slate-50"
               >
                 Delete
               </button>
@@ -155,112 +110,6 @@ export default function Medicines() {
           </article>
         ))}
       </div>
-
-      {/* Create form */}
-      <form
-        id="add-form"
-        onSubmit={addMedicine}
-        className="card"
-        style={{ display: "grid", gap: 8, maxWidth: 720 }}
-      >
-        <h3 style={{ margin: 0 }}>Agregar medicina</h3>
-
-        {/* NAME */}
-        <label htmlFor="name" className="sr-only">Nombre</label>
-        <input
-          id="name"
-          name="name"
-          placeholder="Nombre (p. ej., Ibuprofeno)"
-          value={form.name}
-          onChange={onChange}
-          style={{ padding: 8, borderRadius: 8, border: "1px solid #ccc" }}
-          aria-describedby="name-help"
-          required
-        />
-        {/* ⬇️ FieldHelp shows static tip immediately; upgrades if AI returns */}
-        <FieldHelp fieldKey={fieldKeyMap.name} id="name-help" />
-
-        <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
-          {/* DOSE */}
-          <label htmlFor="dose" className="sr-only">Dosis</label>
-          <input
-            id="dose"
-            name="dose"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="Dosis (número, p. ej., 200)"
-            value={form.dose}
-            onChange={onChange}
-            style={{ padding: 8, borderRadius: 8, border: "1px solid #ccc" }}
-            inputMode="decimal"
-            aria-describedby="dose-help"
-            required
-          />
-          <FieldHelp fieldKey={fieldKeyMap.dose} id="dose-help" />
-
-          {/* UNIT */}
-          <label htmlFor="unit" className="sr-only">Unidad</label>
-          <select
-            id="unit"
-            name="unit"
-            value={form.unit}
-            onChange={onChange}
-            style={{ padding: 8, borderRadius: 8, border: "1px solid #ccc" }}
-            aria-describedby="unit-help"
-          >
-            <option value="pill">pill</option>
-            <option value="mg">mg</option>
-            <option value="ml">ml</option>
-            <option value="caps">caps</option>
-            <option value="drops">drops</option>
-          </select>
-          <FieldHelp fieldKey={fieldKeyMap.unit} id="unit-help" />
-        </div>
-
-        {/* PRESCRIBER */}
-        <label htmlFor="prescriber" className="sr-only">Prescriber</label>
-        <input
-          id="prescriber"
-          name="prescriber"
-          placeholder="Prescriber (opcional)"
-          value={form.prescriber}
-          onChange={onChange}
-          style={{ padding: 8, borderRadius: 8, border: "1px solid #ccc" }}
-          aria-describedby="prescriber-help"
-        />
-        <FieldHelp fieldKey={fieldKeyMap.prescriber} id="prescriber-help" />
-
-        {/* NOTES */}
-        <label htmlFor="notes" className="sr-only">Notas</label>
-        <textarea
-          id="notes"
-          name="notes"
-          placeholder="Notas (opcional)"
-          value={form.notes}
-          onChange={onChange}
-          rows={3}
-          style={{ padding: 8, borderRadius: 8, border: "1px solid #ccc" }}
-          aria-describedby="notes-help"
-        />
-        <FieldHelp fieldKey={fieldKeyMap.notes} id="notes-help" />
-
-        <div style={{ display: "flex", gap: 8 }}>
-          <button
-            type="submit"
-            style={{ padding: "8px 12px", borderRadius: 8, background: "black", color: "white", border: 0 }}
-          >
-            Guardar
-          </button>
-          <button
-            type="button"
-            onClick={() => setForm({ name: "", dose: "", unit: "pill", prescriber: "", notes: "" })}
-            style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #ccc", background: "white" }}
-          >
-            Limpiar
-          </button>
-        </div>
-      </form>
     </Page>
   );
 }
