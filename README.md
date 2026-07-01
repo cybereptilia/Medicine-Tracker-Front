@@ -28,21 +28,34 @@ I worked on the frontend development and quality assurance side of the project. 
 - Tailwind CSS
 - Component-based UI design
 
-## Screenshots
+## Application Screenshots
+
+### Login
+
+![Login](screenshots/Login.png)
+
+---
 
 ### Dashboard
+
 ![Dashboard](screenshots/dashboard.png)
 
-### Medication List
-![Medication List](screenshots/medications.png)
+---
 
-### Add Medication
-![Add Medication](screenshots/add-medication.png)
+### Medications
 
-### Schedule Page
-![Schedule Page](screenshots/schedules.png)
+![Medications](screenshots/Medications.png)
+
+---
+
+### Register Medication
+
+![Register Medication](screenshots/medicationregistration.png)
+
+---
 
 ### Settings
+
 ![Settings](screenshots/settings.png)
 
 ## What I Learned
